@@ -44,6 +44,18 @@ consumidor.solicitudDevolucion()
 
 ---
 
+### [grupoAlcoholico ]
+**Definición:** [Delimita las caracteristicas de las bebidas en base a su preparacion]
+**No usar:** [categoria ]
+
+**Precondiciones:** [contenido de alcohol]
+
+**Ejemplo de uso:**
+
+cerveza.grupoAlcoholico()
+
+---
+
 ### [Permiso ]
 **Definición:** Solicitud de permiso para venta de bebida artesanal
 **No usar:** [Peticion ]
@@ -69,6 +81,7 @@ tramite.pagar()
 
 | No usar | Usar |
 |---|---|
+| [categoria] | [grupoAlcoholico]
 | [botella] | [Envase] |
 | [Botella retornable] | [Envase retornable] |
 | [Persona] | [Consumidor] |
