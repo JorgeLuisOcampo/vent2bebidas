@@ -1,4 +1,4 @@
-package com.uniquindio.backend;
+package com.uniquindio.vent2bebidas;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
