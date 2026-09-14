@@ -69,9 +69,9 @@ public class Bebida {
 
     public void cambiarPrecio(double nuevoPrecio) {
 
-        if (nuevoPrecio <= 0) {
+        if (nuevoPrecio <= 0 || precio == nuevoPrecio) {
             throw new ReglaDominioException(
-                    "El precio debe ser mayor que cero."
+                    "El precio debe ser mayor que cero y diferente al actual."
             );
         }
 
