@@ -17,23 +17,18 @@ public class Consumidor {
     private int comprasHistoricas;
 
     public Consumidor(UUID id, String nombre, CodigoComprador codigoComprador, LocalDate fechaNacimiento, int comprasHistoricas){
-
         if (id == null){
             throw new ReglaDominioException("El id del consumidor debe ser obligatorio.");
         }
-
         if (nombre == null){
             throw new ReglaDominioException("El nombre del consumidor debe ser obligatorio.");
         }
-
         if (codigoComprador == null){
             throw new ReglaDominioException("Debe tener un código válido para acceder al catálogo.");
         }
-
         if(fechaNacimiento == null || fechaNacimiento.isAfter(LocalDate.now())){
             throw new ReglaDominioException("La fecha de nacimiento no es válida.");
         }
-
         if(comprasHistoricas < 0){
             throw new ReglaDominioException("El historial de compras no puede ser negativo.");
         }
@@ -43,6 +38,10 @@ public class Consumidor {
         this.codigoComprador = codigoComprador;
         this.fechaNacimiento = fechaNacimiento;
         this.comprasHistoricas = comprasHistoricas;
+    }
+
+    public static Consumidor crearNuevoConsumidor(UUID id, String nombre, CodigoComprador codigoComprador, LocalDate fechaNacimiento){
+        return new Consumidor(id, nombre, codigoComprador, fechaNacimiento, 0);
     }
 
     public UUID getId() {

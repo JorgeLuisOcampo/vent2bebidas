@@ -1,6 +1,7 @@
 package com.uniquindio.vent2bebidas.domain.entity;
 
 import com.uniquindio.vent2bebidas.domain.exception.ReglaDominioException;
+import com.uniquindio.vent2bebidas.domain.valueobject.GrupoAlcoholico;
 import com.uniquindio.vent2bebidas.domain.valueobject.TipoEnvase;
 
 import java.util.Objects;
@@ -11,13 +12,14 @@ public class Bebida {
     private final UUID id;
     private final String nombre;
     private final TipoEnvase tipoEnvase;
-
+    private final GrupoAlcoholico grupoAlcoholico;
     private double precio;
 
     public Bebida(
             UUID id,
             String nombre,
             TipoEnvase tipoEnvase,
+            GrupoAlcoholico grupoAlcoholico,
             double precio
     ) {
 
@@ -39,6 +41,12 @@ public class Bebida {
             );
         }
 
+        if (grupoAlcoholico == null) {
+            throw new ReglaDominioException(
+                    "El grupo alcoholico es obligatorio."
+            );
+        }
+
         if (precio <= 0) {
             throw new ReglaDominioException(
                     "El precio de la bebida debe ser mayor que cero."
@@ -48,21 +56,22 @@ public class Bebida {
         this.id = id;
         this.nombre = nombre;
         this.tipoEnvase = tipoEnvase;
+        this.grupoAlcoholico = grupoAlcoholico;
         this.precio = precio;
     }
 
     public UUID getId() {
         return id;
     }
-
     public String getNombre() {
         return nombre;
     }
-
     public TipoEnvase getTipoEnvase() {
         return tipoEnvase;
     }
-
+    public GrupoAlcoholico getGrupoAlcoholico() {
+        return grupoAlcoholico;
+    }
     public double getPrecio() {
         return precio;
     }
