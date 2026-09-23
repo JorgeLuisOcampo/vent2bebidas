@@ -26,4 +26,16 @@ class EnvaseTest {
 
         assertEquals("El envase no es retornable.", excepcionCapturada.getMessage());
     }
+
+    @Test
+    void debeCambiarEstadoADanado() {
+        
+        Capacidad capacidad = new Capacidad(500);
+        TipoEnvase tipoRetornable = new TipoEnvase(MaterialEnvase.VIDRIO, capacidad, true);
+        Envase envase = new Envase(UUID.randomUUID(), tipoRetornable);
+
+        envase.marcarComoDanado();
+
+        assertEquals(EstadoEnvase.DANADO, envase.getEstado());
+    }
 }
