@@ -1,5 +1,6 @@
 package com.uniquindio.vent2bebidas.domain.entity;
 
+import com.uniquindio.vent2bebidas.domain.exception.ReglaDominioException;
 import com.uniquindio.vent2bebidas.domain.valueobject.CodigoComprador;
 
 import java.time.LocalDate;
@@ -18,23 +19,23 @@ public class Consumidor {
     public Consumidor(UUID id, String nombre, CodigoComprador codigoComprador, LocalDate fechaNacimiento, int comprasHistoricas){
 
         if (id == null){
-            throw new IllegalArgumentException("El id del consumidor debe ser obligatorio.");
+            throw new ReglaDominioException("El id del consumidor debe ser obligatorio.");
         }
 
         if (nombre == null){
-            throw new IllegalArgumentException("El nombre del consumidor debe ser obligatorio.");
+            throw new ReglaDominioException("El nombre del consumidor debe ser obligatorio.");
         }
 
         if (codigoComprador == null){
-            throw new IllegalArgumentException("Debe tener un código válido para acceder al catálogo.");
+            throw new ReglaDominioException("Debe tener un código válido para acceder al catálogo.");
         }
 
         if(fechaNacimiento == null || fechaNacimiento.isAfter(LocalDate.now())){
-            throw new IllegalArgumentException("La fecha de nacimiento no es válida.");
+            throw new ReglaDominioException("La fecha de nacimiento no es válida.");
         }
 
         if(comprasHistoricas < 0){
-            throw new IllegalArgumentException("El historial de compras no puede ser negativo.");
+            throw new ReglaDominioException("El historial de compras no puede ser negativo.");
         }
 
         this.id = id;
