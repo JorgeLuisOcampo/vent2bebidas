@@ -29,7 +29,7 @@ class EnvaseTest {
 
     @Test
     void debeCambiarEstadoADanado() {
-        
+
         Capacidad capacidad = new Capacidad(500);
         TipoEnvase tipoRetornable = new TipoEnvase(MaterialEnvase.VIDRIO, capacidad, true);
         Envase envase = new Envase(UUID.randomUUID(), tipoRetornable);
@@ -37,5 +37,22 @@ class EnvaseTest {
         envase.marcarComoDanado();
 
         assertEquals(EstadoEnvase.DANADO, envase.getEstado());
+    }
+
+    @Test
+    void debeAumentarUsosYCambiarEstadoAlRetornar() {
+        // Arrange
+        Capacidad capacidad = new Capacidad(500);
+        TipoEnvase tipoRetornable = new TipoEnvase(MaterialEnvase.VIDRIO, capacidad, true);
+        Envase envase = new Envase(UUID.randomUUID(), tipoRetornable);
+
+        int usosIniciales = envase.getCantidadUsos();
+
+        // Act
+        envase.registrarRetorno();
+
+        // Assert
+        assertEquals(EstadoEnvase.RETORNADO, envase.getEstado());
+        assertEquals(usosIniciales + 1, envase.getCantidadUsos());
     }
 }
