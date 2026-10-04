@@ -16,5 +16,12 @@ class PrecioTest {
         // Act & Assert
         assertEquals(p1, p2); // Value Object: igual por VALOR
     }
-    
+
+    @Test
+    void noDebeCrearPrecioEnCero() {
+        // Act & Assert
+        assertThrows(ReglaDominioException.class, () -> {
+            new Precio(0, "COP");
+        });
+    }
 }
