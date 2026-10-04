@@ -27,4 +27,15 @@ class TipoEnvaseTest {
             new TipoEnvase(MaterialEnvase.ALUMINIO, capacidad, true);
         });
     }
+
+    @Test
+    void noDebeCrearUnTipoSinMaterial() {
+        // Arrange
+        Capacidad capacidad = new Capacidad(330);
+
+        // Act & Assert
+        assertThrows(ReglaDominioException.class, () -> {
+            new TipoEnvase(null, capacidad, false);
+        });
+    }
 }
