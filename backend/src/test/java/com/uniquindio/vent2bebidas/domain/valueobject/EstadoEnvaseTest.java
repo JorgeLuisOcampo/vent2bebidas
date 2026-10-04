@@ -24,4 +24,11 @@ class EstadoEnvaseTest {
         assertTrue(permitido);
     }
 
+    @Test
+    void unEnvaseDanadoNoPuedeVolverARetornarseSoloDescartarse() {
+        // Act & Assert
+        assertFalse(EstadoEnvase.DANADO.puedeTransicionarA(EstadoEnvase.RETORNADO));
+        assertTrue(EstadoEnvase.DANADO.puedeTransicionarA(EstadoEnvase.DESCARTADO));
+    }
+
 }
