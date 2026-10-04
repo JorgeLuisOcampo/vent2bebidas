@@ -24,4 +24,12 @@ class PrecioTest {
             new Precio(0, "COP");
         });
     }
+
+    @Test
+    void noDebeCrearPrecioNegativo() {
+        // Act & Assert
+        assertThrows(ReglaDominioException.class, () -> {
+            new Precio(-1000, "COP");
+        });
+    }
 }
