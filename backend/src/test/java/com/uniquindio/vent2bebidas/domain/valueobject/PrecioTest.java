@@ -49,4 +49,17 @@ class PrecioTest {
         // Assert
         assertEquals("COP", precio.moneda());
     }
+
+    @Test
+    void conDescuentoDebeReducirElMontoSinModificarElOriginal() {
+        // Arrange
+        Precio original = new Precio(10000, "COP");
+
+        // Act
+        Precio conDescuento = original.conDescuento(20);
+
+        // Assert
+        assertEquals(8000.0, conDescuento.monto());
+        assertEquals(10000.0, original.monto()); // el original no cambió
+    }
 }
