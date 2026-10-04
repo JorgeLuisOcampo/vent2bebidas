@@ -12,30 +12,35 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EnvaseTest {
+
     @Test
     void noDebeRetornarEnvaseNoRetornable() {
-
+        // Arrange
         Capacidad capacidad = new Capacidad(500);
         TipoEnvase tipoNoRetornable = new TipoEnvase(MaterialEnvase.PLASTICO, capacidad, false);
-        Envase envase = new Envase(UUID.randomUUID(), tipoNoRetornable);
+        Envase envase = Envase.registrar(UUID.randomUUID(), tipoNoRetornable);
 
+        // Act
         ReglaDominioException excepcionCapturada = assertThrows(
                 ReglaDominioException.class,
                 () -> envase.registrarRetorno()
         );
 
+        // Assert
         assertEquals("El envase no es retornable.", excepcionCapturada.getMessage());
     }
 
     @Test
     void debeCambiarEstadoADanado() {
-
+        // Arrange
         Capacidad capacidad = new Capacidad(500);
         TipoEnvase tipoRetornable = new TipoEnvase(MaterialEnvase.VIDRIO, capacidad, true);
-        Envase envase = new Envase(UUID.randomUUID(), tipoRetornable);
+        Envase envase = Envase.registrar(UUID.randomUUID(), tipoRetornable);
 
+        // Act
         envase.marcarComoDanado();
 
+        // Assert
         assertEquals(EstadoEnvase.DANADO, envase.getEstado());
     }
 
@@ -44,7 +49,7 @@ class EnvaseTest {
         // Arrange
         Capacidad capacidad = new Capacidad(500);
         TipoEnvase tipoRetornable = new TipoEnvase(MaterialEnvase.VIDRIO, capacidad, true);
-        Envase envase = new Envase(UUID.randomUUID(), tipoRetornable);
+        Envase envase = Envase.registrar(UUID.randomUUID(), tipoRetornable);
 
         int usosIniciales = envase.getCantidadUsos();
 
