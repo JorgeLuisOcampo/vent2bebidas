@@ -32,4 +32,12 @@ class PrecioTest {
             new Precio(-1000, "COP");
         });
     }
+
+    @Test
+    void noDebeCrearPrecioSinMoneda() {
+        // Act & Assert
+        assertThrows(ReglaDominioException.class, () -> {
+            new Precio(5000, " ");
+        });
+    }
 }
