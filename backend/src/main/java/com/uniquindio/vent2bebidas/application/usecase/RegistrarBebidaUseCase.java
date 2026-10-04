@@ -5,9 +5,11 @@ import com.uniquindio.vent2bebidas.domain.repository.BebidaRepository;
 import com.uniquindio.vent2bebidas.domain.valueobject.GrupoAlcoholico;
 import com.uniquindio.vent2bebidas.domain.valueobject.Precio;
 import com.uniquindio.vent2bebidas.domain.valueobject.TipoEnvase;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Service
 public class RegistrarBebidaUseCase {
 
     private final BebidaRepository repository;
