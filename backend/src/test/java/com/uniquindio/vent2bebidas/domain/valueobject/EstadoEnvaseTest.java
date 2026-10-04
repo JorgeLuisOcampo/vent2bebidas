@@ -31,4 +31,13 @@ class EstadoEnvaseTest {
         assertTrue(EstadoEnvase.DANADO.puedeTransicionarA(EstadoEnvase.DESCARTADO));
     }
 
+    @Test
+    void unEnvaseDescartadoEsFinalYNoAdmiteNingunaTransicion() {
+        // Assert
+        assertTrue(EstadoEnvase.DESCARTADO.esFinal());
+        for (EstadoEnvase destino : EstadoEnvase.values()) {
+            assertFalse(EstadoEnvase.DESCARTADO.puedeTransicionarA(destino));
+        }
+    }
+
 }
