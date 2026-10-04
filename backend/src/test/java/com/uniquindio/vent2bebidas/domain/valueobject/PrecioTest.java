@@ -62,4 +62,15 @@ class PrecioTest {
         assertEquals(8000.0, conDescuento.monto());
         assertEquals(10000.0, original.monto()); // el original no cambió
     }
+
+    @Test
+    void noDebePermitirUnDescuentoMayorA99() {
+        // Arrange
+        Precio precio = new Precio(10000, "COP");
+
+        // Act & Assert
+        assertThrows(ReglaDominioException.class, () -> {
+            precio.conDescuento(100);
+        });
+    }
 }
