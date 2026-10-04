@@ -50,4 +50,16 @@ class TipoEnvaseTest {
         // Assert
         assertEquals(30, usos);
     }
+
+    @Test
+    void unTipoNoRetornablePermiteCeroUsos() {
+        // Arrange
+        TipoEnvase tipo = new TipoEnvase(MaterialEnvase.PLASTICO, new Capacidad(500), false);
+
+        // Act
+        int usos = tipo.usosMaximos();
+
+        // Assert
+        assertEquals(0, usos);
+    }
 }
