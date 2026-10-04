@@ -16,7 +16,7 @@ public record Precio(double monto, String moneda) {
             throw new ReglaDominioException("La moneda debe ser un código de 3 letras (ej. COP).");
         }
     }
-    
+
     public Precio conDescuento(int porcentaje) {
         if (porcentaje < 0 || porcentaje > 99) {
             throw new ReglaDominioException("El descuento debe estar entre 0 y 99 por ciento.");
