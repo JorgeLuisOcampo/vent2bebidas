@@ -5,7 +5,7 @@ public enum EstadoEnvase {
     RETORNADO,
     DANADO,
     DESCARTADO;
-    
+
     public boolean puedeTransicionarA(EstadoEnvase siguiente) {
         return switch (this) {
             case NUEVO      -> siguiente == RETORNADO || siguiente == DANADO || siguiente == DESCARTADO;
