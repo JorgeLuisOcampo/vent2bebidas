@@ -13,7 +13,7 @@ import java.util.UUID;
 public class Bebida {
 
     private final UUID id;
-    private final UUID vendedorId; 
+    private final UUID vendedorId;
     private final String nombre;
     private final TipoEnvase tipoEnvase;
     private final GrupoAlcoholico grupoAlcoholico;
