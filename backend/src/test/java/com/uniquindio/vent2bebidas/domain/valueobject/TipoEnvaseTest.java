@@ -38,4 +38,16 @@ class TipoEnvaseTest {
             new TipoEnvase(null, capacidad, false);
         });
     }
+
+    @Test
+    void unTipoRetornableDeVidrioPermiteTreintaUsos() {
+        // Arrange
+        TipoEnvase tipo = new TipoEnvase(MaterialEnvase.VIDRIO, new Capacidad(330), true);
+
+        // Act
+        int usos = tipo.usosMaximos();
+
+        // Assert
+        assertEquals(30, usos);
+    }
 }
