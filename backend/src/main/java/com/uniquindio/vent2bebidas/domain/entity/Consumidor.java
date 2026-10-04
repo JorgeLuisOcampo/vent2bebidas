@@ -1,7 +1,7 @@
 package com.uniquindio.vent2bebidas.domain.entity;
 
 import com.uniquindio.vent2bebidas.domain.exception.ReglaDominioException;
-import com.uniquindio.vent2bebidas.domain.valueobject.CodigoComprador;
+import com.uniquindio.vent2bebidas.domain.valueobject.CodigoConsumidor;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -12,18 +12,18 @@ public class Consumidor {
 
     private final UUID id;
     private final String nombre;
-    private final CodigoComprador codigoComprador;
+    private final CodigoConsumidor codigoConsumidor;
     private final LocalDate fechaNacimiento;
     private int comprasHistoricas;
 
-    public Consumidor(UUID id, String nombre, CodigoComprador codigoComprador, LocalDate fechaNacimiento, int comprasHistoricas){
+    public Consumidor(UUID id, String nombre, CodigoConsumidor codigoConsumidor, LocalDate fechaNacimiento, int comprasHistoricas){
         if (id == null){
             throw new ReglaDominioException("El id del consumidor debe ser obligatorio.");
         }
         if (nombre == null){
             throw new ReglaDominioException("El nombre del consumidor debe ser obligatorio.");
         }
-        if (codigoComprador == null){
+        if (codigoConsumidor == null){
             throw new ReglaDominioException("Debe tener un código válido para acceder al catálogo.");
         }
         if(fechaNacimiento == null || fechaNacimiento.isAfter(LocalDate.now())){
@@ -35,13 +35,13 @@ public class Consumidor {
 
         this.id = id;
         this.nombre = nombre;
-        this.codigoComprador = codigoComprador;
+        this.codigoConsumidor = codigoConsumidor;
         this.fechaNacimiento = fechaNacimiento;
         this.comprasHistoricas = comprasHistoricas;
     }
 
-    public static Consumidor crearNuevoConsumidor(UUID id, String nombre, CodigoComprador codigoComprador, LocalDate fechaNacimiento){
-        return new Consumidor(id, nombre, codigoComprador, fechaNacimiento, 0);
+    public static Consumidor crearNuevoConsumidor(UUID id, String nombre, CodigoConsumidor codigoConsumidor, LocalDate fechaNacimiento){
+        return new Consumidor(id, nombre, codigoConsumidor, fechaNacimiento, 0);
     }
 
     public UUID getId() {
@@ -50,8 +50,8 @@ public class Consumidor {
     public String getNombre() {
         return nombre;
     }
-    public CodigoComprador getCodigoComprador() {
-        return codigoComprador;
+    public CodigoConsumidor getCodigoConsumidor() {
+        return codigoConsumidor;
     }
     public LocalDate getFechaNacimiento() {
         return fechaNacimiento;
@@ -82,7 +82,7 @@ public class Consumidor {
         if (!(o instanceof Consumidor that)) return false;
         return id.equals(that.id);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(id);
