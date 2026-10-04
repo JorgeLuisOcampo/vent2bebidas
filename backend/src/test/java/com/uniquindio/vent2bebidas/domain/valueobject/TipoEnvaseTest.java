@@ -16,5 +16,15 @@ class TipoEnvaseTest {
         // Act & Assert
         assertEquals(t1, t2); // Value Object: igual por VALOR
     }
-    
+
+    @Test
+    void noDebeCrearUnTipoRetornableDeAluminio() {
+        // Arrange
+        Capacidad capacidad = new Capacidad(330);
+
+        // Act & Assert
+        assertThrows(ReglaDominioException.class, () -> {
+            new TipoEnvase(MaterialEnvase.ALUMINIO, capacidad, true);
+        });
+    }
 }
