@@ -24,4 +24,12 @@ class CodigoConsumidorTest {
             new CodigoConsumidor("  ");
         });
     }
+
+    @Test
+    void noDebeCrearUnCodigoDeLongitudDistintaDeSeis() {
+        // Act & Assert
+        assertThrows(ReglaDominioException.class, () -> {
+            new CodigoConsumidor("AB12");
+        });
+    }
 }
