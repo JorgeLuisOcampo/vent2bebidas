@@ -15,4 +15,13 @@ class EstadoEnvaseTest {
         assertTrue(permitido);
     }
 
+    @Test
+    void unEnvaseRetornadoPuedeRetornarseDeNuevo() {
+        // Act
+        boolean permitido = EstadoEnvase.RETORNADO.puedeTransicionarA(EstadoEnvase.RETORNADO);
+
+        // Assert
+        assertTrue(permitido);
+    }
+
 }
