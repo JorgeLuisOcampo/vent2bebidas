@@ -40,4 +40,13 @@ class PrecioTest {
             new Precio(5000, " ");
         });
     }
+
+    @Test
+    void laMonedaSeNormalizaAMayusculas() {
+        // Act
+        Precio precio = new Precio(5000, "cop");
+
+        // Assert
+        assertEquals("COP", precio.moneda());
+    }
 }
