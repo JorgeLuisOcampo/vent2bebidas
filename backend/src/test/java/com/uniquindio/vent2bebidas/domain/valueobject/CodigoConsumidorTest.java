@@ -16,4 +16,12 @@ class CodigoConsumidorTest {
         // Act & Assert
         assertEquals(c1, c2); // Value Object: igual por VALOR
     }
+
+    @Test
+    void noDebeCrearUnCodigoVacio() {
+        // Act & Assert
+        assertThrows(ReglaDominioException.class, () -> {
+            new CodigoConsumidor("  ");
+        });
+    }
 }
