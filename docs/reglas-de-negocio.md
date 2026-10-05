@@ -4,6 +4,7 @@
 
 Estas reglas **nunca pueden romperse**: el sistema las impide en el dominio, y no dependen de que la interfaz o un caso de uso "se acuerde" de validarlas. Cada regla indica **por qué existe**, **dónde se protege** en el código y **qué prueba** lo demuestra.
 
+**Integrantes:** Juan David Torres Arango · Oscar Leandro Agudelo Franco · Jorge Luis Ocampo Ocampo
 ---
 
 ## Reglas del envase

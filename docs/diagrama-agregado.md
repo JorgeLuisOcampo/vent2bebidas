@@ -2,6 +2,7 @@
 
 **Proyecto:** Vent2Bebidas
 
+**Integrantes:** Juan David Torres Arango · Oscar Leandro Agudelo Franco · Jorge Luis Ocampo Ocampo
 ---
 
 ## 1. Los tres agregados
