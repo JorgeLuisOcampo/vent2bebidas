@@ -16,7 +16,7 @@ Arquitectura hexagonal con tres capas dentro de `backend/`:
 | `application` | Casos de uso (orquestan el dominio) y DTOs de entrada y salida. |
 | `infrastructure` | Adaptadores: repositorios en memoria (más adelante JPA y REST). |
 
-## Modelo del dominio (Entrega 1)
+## Modelo del dominio
 
 Tres agregados, cada uno con su propia raíz:
 
@@ -36,13 +36,6 @@ Value Objects: `Capacidad`, `MaterialEnvase`, `TipoEnvase`, `EstadoEnvase`,
 - Comprar más de 5 unidades de una vez exige más de 3 compras históricas.
 - Una bebida eliminada no puede modificarse ni venderse (borrado lógico).
 
-## Ejecutar las pruebas
-
-```bash
-cd backend
-./gradlew test          # Linux / macOS / Git Bash
-gradlew.bat test        # Windows (cmd o PowerShell)
-```
 
 ## Documentación
 
@@ -51,6 +44,5 @@ gradlew.bat test        # Windows (cmd o PowerShell)
 
 ## Convenciones de trabajo
 
-- Una rama por caso de uso o funcionalidad (`feature/...`, `test/...`, `docs/...`).
-- Mensajes de commit con prefijo: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `build`.
+- Mensajes de commit con prefijo: `feat`, `fix`, `refactor`, `test`, `docs`, `build`.
 - Todo cambio entra a `main` por Pull Request.
