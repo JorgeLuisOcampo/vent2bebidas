@@ -4,7 +4,6 @@ import com.uniquindio.vent2bebidas.domain.entity.Bebida;
 import com.uniquindio.vent2bebidas.domain.repository.BebidaRepository;
 import com.uniquindio.vent2bebidas.domain.repository.Pagina;
 import com.uniquindio.vent2bebidas.domain.valueobject.GrupoAlcoholico;
-import org.springframework.stereotype.Repository;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -13,7 +12,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+// Ya NO es un bean de Spring: el repositorio real es BebidaRepositoryJpa.
+// Se conserva para las pruebas unitarias de los casos de uso (se crea con new).
 public class BebidaRepositoryEnMemoria implements BebidaRepository {
 
     private final Map<UUID, Bebida> baseDeDatos = new HashMap<>();
