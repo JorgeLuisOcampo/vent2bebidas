@@ -56,6 +56,17 @@ public class Bebida {
     }
 
 
+    // SOLO para la capa de persistencia: reconstruye una Bebida que YA existía.
+    // No valida porque esos datos se validaron cuando la bebida se publicó;
+    // además necesita poder restaurar el estado (por ejemplo ELIMINADA).
+    public static Bebida reconstruir(UUID id, UUID vendedorId, String nombre, TipoEnvase tipoEnvase,
+                                     GrupoAlcoholico grupoAlcoholico, Precio precio, EstadoBebida estado) {
+        Bebida bebida = new Bebida(id, vendedorId, nombre, tipoEnvase, grupoAlcoholico, precio);
+        bebida.estado = estado;
+        return bebida;
+    }
+
+
     public void cambiarPrecio(Precio nuevoPrecio) {
         verificarQueNoEstaEliminada();
         if (nuevoPrecio == null) {
