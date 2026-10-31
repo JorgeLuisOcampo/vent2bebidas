@@ -1,4 +1,5 @@
 package com.uniquindio.vent2bebidas.application.usecase;
+
 import com.uniquindio.vent2bebidas.domain.entity.Bebida;
 import com.uniquindio.vent2bebidas.domain.exception.ReglaDominioException;
 import com.uniquindio.vent2bebidas.domain.repository.Pagina;
@@ -10,12 +11,16 @@ import com.uniquindio.vent2bebidas.domain.valueobject.TipoEnvase;
 import
         com.uniquindio.vent2bebidas.infrastructure.persistence.BebidaRepositoryEnMemoria;
 import org.junit.jupiter.api.Test;
+
 import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 class BuscarBebidasUseCaseTest {
     private final BebidaRepositoryEnMemoria repository = new
             BebidaRepositoryEnMemoria();
     private final BuscarBebidasUseCase useCase = new BuscarBebidasUseCase(repository);
+
     private Bebida publicar(String nombre, GrupoAlcoholico grupo) {
         Bebida bebida = Bebida.publicar(UUID.randomUUID(), UUID.randomUUID(), nombre,
                 new TipoEnvase(MaterialEnvase.VIDRIO, new Capacidad(330), true), grupo, new
@@ -23,12 +28,14 @@ class BuscarBebidasUseCaseTest {
         repository.guardar(bebida);
         return bebida;
     }
+
     @Test
     void noDeberiaPermitirUnaPaginaNegativa() {
 // Act & Assert
         assertThrows(ReglaDominioException.class, () -> useCase.ejecutar("cerveza", null, -1,
                 10));
     }
+
     @Test
     void noDeberiaPermitirUnTamanoDePaginaFueraDeRango() {
 // Act & Assert
@@ -37,6 +44,7 @@ class BuscarBebidasUseCaseTest {
         assertThrows(ReglaDominioException.class, () -> useCase.ejecutar("cerveza", null, 0,
                 51));
     }
+
     @Test
     void deberiaDevolverLasBebidasDisponiblesOrdenadasPorNombreYPaginadas() {
 // Arrange
@@ -54,6 +62,7 @@ class BuscarBebidasUseCaseTest {
         assertEquals("Cerveza Negra", primera.contenido().get(0).getNombre());
         assertEquals("Cerveza Roja", primera.contenido().get(1).getNombre());
     }
+
     @Test
     void deberiaFiltrarPorGrupoAlcoholico() {
 // Arrange
