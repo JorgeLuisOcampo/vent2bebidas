@@ -1,6 +1,7 @@
 package com.uniquindio.vent2bebidas.domain.repository;
 
 import com.uniquindio.vent2bebidas.domain.entity.Bebida;
+import com.uniquindio.vent2bebidas.domain.valueobject.GrupoAlcoholico;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,4 +11,6 @@ public interface BebidaRepository {
     Optional<Bebida> obtenerPorId(UUID id);
     void guardar(Bebida bebida);
     List<Bebida> listarDisponibles();
+
+    Pagina<Bebida> buscar(String texto, GrupoAlcoholico grupo, int pagina, int tamano);
 }
