@@ -144,6 +144,44 @@ class BebidaTest {
         });
     }
 
+    //Propiedad del vendedor (RN-11)
+
+    @Test
+    void elVendedorDuenoPuedeCambiarElPrecio() {
+        // Arrange
+        UUID vendedor = UUID.randomUUID();
+        Bebida bebida = Bebida.publicar(UUID.randomUUID(), vendedor, "Cerveza Artesanal",
+                tipoEnvaseEjemplo(), GrupoAlcoholico.FERMENTADA, new Precio(5000, "COP"));
+
+        // Act
+        bebida.cambiarPrecio(vendedor, new Precio(5500, "COP"));
+
+        // Assert
+        assertEquals(5500.0, bebida.getPrecio().monto());
+    }
+
+    @Test
+    void otroVendedorNoPuedeCambiarElPrecio() {
+        // Arrange
+        Bebida bebida = bebidaEjemplo();
+
+        // Act & Assert
+        assertThrows(ReglaDominioException.class,
+                () -> bebida.cambiarPrecio(UUID.randomUUID(), new Precio(5500, "COP")));
+        assertEquals(5000.0, bebida.getPrecio().monto()); // no cambió nada
+    }
+
+    @Test
+    void otroVendedorNoPuedeEliminarLaBebida() {
+        // Arrange
+        Bebida bebida = bebidaEjemplo();
+
+        // Act & Assert
+        assertThrows(ReglaDominioException.class,
+                () -> bebida.eliminarLogicamentePor(UUID.randomUUID()));
+        assertTrue(bebida.estaDisponible());
+    }
+
     @Test
     void unaBebidaEliminadaNoPuedeVenderse() {
         // Arrange

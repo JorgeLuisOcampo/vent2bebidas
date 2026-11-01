@@ -67,6 +67,24 @@ public class Bebida {
     }
 
 
+    public void verificarQuePerteneceA(UUID vendedorSolicitante) {
+        if (vendedorSolicitante == null || !this.vendedorId.equals(vendedorSolicitante)) {
+            throw new ReglaDominioException("Solo el vendedor que publicó la bebida puede modificarla.");
+        }
+    }
+
+    // Cambio de precio pedido por un vendedor: primero verifica que sea el dueño.
+    public void cambiarPrecio(UUID vendedorSolicitante, Precio nuevoPrecio) {
+        verificarQuePerteneceA(vendedorSolicitante);
+        cambiarPrecio(nuevoPrecio);
+    }
+
+    // Retiro del catálogo pedido por un vendedor: primero verifica que sea el dueño.
+    public void eliminarLogicamentePor(UUID vendedorSolicitante) {
+        verificarQuePerteneceA(vendedorSolicitante);
+        eliminarLogicamente();
+    }
+
     public void cambiarPrecio(Precio nuevoPrecio) {
         verificarQueNoEstaEliminada();
         if (nuevoPrecio == null) {
