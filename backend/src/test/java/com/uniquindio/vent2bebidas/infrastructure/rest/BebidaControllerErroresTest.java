@@ -2,6 +2,7 @@ package com.uniquindio.vent2bebidas.infrastructure.rest;
 
 import com.uniquindio.vent2bebidas.application.usecase.BuscarBebidasUseCase;
 import com.uniquindio.vent2bebidas.application.usecase.CambiarPrecioBebidaUseCase;
+import com.uniquindio.vent2bebidas.application.usecase.EliminarBebidaUseCase;
 import com.uniquindio.vent2bebidas.application.usecase.ObtenerBebidaUseCase;
 import com.uniquindio.vent2bebidas.application.usecase.RegistrarBebidaUseCase;
 import com.uniquindio.vent2bebidas.domain.exception.ReglaDominioException;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -50,6 +52,8 @@ class BebidaControllerErroresTest {
     private RegistrarBebidaUseCase registrarBebida;
     @MockitoBean
     private CambiarPrecioBebidaUseCase cambiarPrecio;
+    @MockitoBean
+    private EliminarBebidaUseCase eliminarBebida;
 
     @Test
     void deberiaResponder404CuandoLaBebidaNoExiste() throws Exception {
@@ -102,5 +106,16 @@ class BebidaControllerErroresTest {
                         .content("{}"))
                 .andExpect(status().isBadRequest());
         verify(cambiarPrecio, never()).ejecutar(any(), any(), any());
+    }
+
+    @Test
+    void deberiaEliminarLogicamenteConElVendedorDelToken() throws Exception {
+// Arrange
+        UUID id = UUID.randomUUID();
+// Act & Assert: responde 204 y el caso de uso recibe el vendedor que viene en el token
+        mockMvc.perform(delete("/api/bebidas/{id}", id)
+                        .with(jwt().jwt(j -> j.claim("uid", VENDEDOR_ID.toString()))))
+                .andExpect(status().isNoContent());
+        verify(eliminarBebida).ejecutar(id, VENDEDOR_ID);
     }
 }
