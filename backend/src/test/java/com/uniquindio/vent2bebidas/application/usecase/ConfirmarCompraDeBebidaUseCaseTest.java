@@ -1,16 +1,19 @@
 package com.uniquindio.vent2bebidas.application.usecase;
 
 import com.uniquindio.vent2bebidas.domain.entity.Bebida;
+import com.uniquindio.vent2bebidas.domain.entity.Compra;
 import com.uniquindio.vent2bebidas.domain.entity.Consumidor;
 import com.uniquindio.vent2bebidas.domain.exception.ReglaDominioException;
 import com.uniquindio.vent2bebidas.domain.service.VerificadorCodigoConsumidor;
 import com.uniquindio.vent2bebidas.domain.valueobject.Capacidad;
+import com.uniquindio.vent2bebidas.domain.valueobject.EstadoCompra;
 import com.uniquindio.vent2bebidas.domain.valueobject.CodigoConsumidor;
 import com.uniquindio.vent2bebidas.domain.valueobject.GrupoAlcoholico;
 import com.uniquindio.vent2bebidas.domain.valueobject.MaterialEnvase;
 import com.uniquindio.vent2bebidas.domain.valueobject.Precio;
 import com.uniquindio.vent2bebidas.domain.valueobject.TipoEnvase;
 import com.uniquindio.vent2bebidas.infrastructure.persistence.BebidaRepositoryEnMemoria;
+import com.uniquindio.vent2bebidas.infrastructure.persistence.CompraRepositoryEnMemoria;
 import com.uniquindio.vent2bebidas.infrastructure.persistence.ConsumidorRepositoryEnMemoria;
 import org.junit.jupiter.api.Test;
 
@@ -24,8 +27,9 @@ class ConfirmarCompraDeBebidaUseCaseTest {
 
     private final ConsumidorRepositoryEnMemoria consumidores = new ConsumidorRepositoryEnMemoria();
     private final BebidaRepositoryEnMemoria bebidas = new BebidaRepositoryEnMemoria();
+    private final CompraRepositoryEnMemoria compras = new CompraRepositoryEnMemoria();
     private final ConfirmarCompraDeBebidaUseCase useCase =
-            new ConfirmarCompraDeBebidaUseCase(consumidores, bebidas);
+            new ConfirmarCompraDeBebidaUseCase(consumidores, bebidas, compras);
 
     private Consumidor registrarConsumidor(String codigo, int edad) {
         return new RegistrarConsumidorUseCase(consumidores, new VerificadorCodigoConsumidor(consumidores)).ejecutar(
@@ -46,11 +50,15 @@ class ConfirmarCompraDeBebidaUseCaseTest {
         Bebida bebida = registrarBebida(GrupoAlcoholico.FERMENTADA);
 
         // Act
-        useCase.ejecutar(consumidor.getId(), bebida.getId(), 2);
+        Compra compra = useCase.ejecutar(consumidor.getId(), bebida.getId(), 2);
 
         // Assert
         Consumidor guardado = consumidores.obtenerPorId(consumidor.getId()).orElseThrow();
         assertEquals(1, guardado.getComprasHistoricas());
+        Compra guardada = compras.obtenerPorId(compra.getId()).orElseThrow();
+        assertEquals(EstadoCompra.CONFIRMADA, guardada.getEstado());
+        assertEquals(bebida.getVendedorId(), guardada.getVendedorId());
+        assertEquals(new Precio(10000, "COP"), guardada.total());
     }
 
     @Test
@@ -64,6 +72,7 @@ class ConfirmarCompraDeBebidaUseCaseTest {
             useCase.ejecutar(menor.getId(), bebida.getId(), 1);
         });
         assertEquals(0, menor.getComprasHistoricas()); // la compra fallida no se registró
+        assertEquals(0, compras.cantidad());          // y no se guardó ninguna compra
     }
 
     @Test
@@ -88,5 +97,16 @@ class ConfirmarCompraDeBebidaUseCaseTest {
         assertThrows(NoSuchElementException.class, () -> {
             useCase.ejecutar(UUID.randomUUID(), bebida.getId(), 1);
         });
+    }
+
+    @Test
+    void noDebeVenderMasDeCincoUnidadesAUnConsumidorSinHistorial() {
+        // Arrange
+        Consumidor nuevo = registrarConsumidor("NU3V0S", 25);
+        Bebida bebida = registrarBebida(GrupoAlcoholico.SIN_ALCOHOL);
+
+        // Act & Assert
+        assertThrows(ReglaDominioException.class, () -> useCase.ejecutar(nuevo.getId(), bebida.getId(), 6));
+        assertEquals(0, compras.cantidad());
     }
 }
