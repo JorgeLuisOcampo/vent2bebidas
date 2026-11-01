@@ -2,6 +2,7 @@ package com.uniquindio.vent2bebidas.application.usecase;
 
 import com.uniquindio.vent2bebidas.domain.entity.Consumidor;
 import com.uniquindio.vent2bebidas.domain.exception.ReglaDominioException;
+import com.uniquindio.vent2bebidas.domain.service.VerificadorCodigoConsumidor;
 import com.uniquindio.vent2bebidas.domain.valueobject.CodigoConsumidor;
 import com.uniquindio.vent2bebidas.infrastructure.persistence.ConsumidorRepositoryEnMemoria;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,8 @@ class RegistrarConsumidorUseCaseTest {
     void debeRegistrarUnConsumidorYGuardarlo() {
         // Arrange
         ConsumidorRepositoryEnMemoria repository = new ConsumidorRepositoryEnMemoria();
-        RegistrarConsumidorUseCase useCase = new RegistrarConsumidorUseCase(repository);
+        RegistrarConsumidorUseCase useCase =
+                new RegistrarConsumidorUseCase(repository, new VerificadorCodigoConsumidor(repository));
 
         // Act
         Consumidor consumidor = useCase.ejecutar(
@@ -31,7 +33,8 @@ class RegistrarConsumidorUseCaseTest {
     void noDebePermitirDosConsumidoresConElMismoCodigo() {
         // Arrange
         ConsumidorRepositoryEnMemoria repository = new ConsumidorRepositoryEnMemoria();
-        RegistrarConsumidorUseCase useCase = new RegistrarConsumidorUseCase(repository);
+        RegistrarConsumidorUseCase useCase =
+                new RegistrarConsumidorUseCase(repository, new VerificadorCodigoConsumidor(repository));
         useCase.ejecutar("Ana Gómez", new CodigoConsumidor("AB12CD"), LocalDate.now().minusYears(30));
 
         // Act & Assert

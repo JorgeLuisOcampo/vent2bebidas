@@ -3,6 +3,7 @@ package com.uniquindio.vent2bebidas.application.usecase;
 import com.uniquindio.vent2bebidas.domain.entity.Bebida;
 import com.uniquindio.vent2bebidas.domain.entity.Consumidor;
 import com.uniquindio.vent2bebidas.domain.exception.ReglaDominioException;
+import com.uniquindio.vent2bebidas.domain.service.VerificadorCodigoConsumidor;
 import com.uniquindio.vent2bebidas.domain.valueobject.Capacidad;
 import com.uniquindio.vent2bebidas.domain.valueobject.CodigoConsumidor;
 import com.uniquindio.vent2bebidas.domain.valueobject.GrupoAlcoholico;
@@ -27,7 +28,7 @@ class ConfirmarCompraDeBebidaUseCaseTest {
             new ConfirmarCompraDeBebidaUseCase(consumidores, bebidas);
 
     private Consumidor registrarConsumidor(String codigo, int edad) {
-        return new RegistrarConsumidorUseCase(consumidores).ejecutar(
+        return new RegistrarConsumidorUseCase(consumidores, new VerificadorCodigoConsumidor(consumidores)).ejecutar(
                 "Cliente " + codigo, new CodigoConsumidor(codigo), LocalDate.now().minusYears(edad));
     }
 
