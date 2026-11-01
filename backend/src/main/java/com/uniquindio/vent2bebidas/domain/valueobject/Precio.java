@@ -24,6 +24,14 @@ public record Precio(double monto, String moneda) {
         return new Precio(monto * (100 - porcentaje) / 100.0, moneda);
     }
 
+    // Devuelve un NUEVO Precio (los Value Objects son inmutables): precio unitario x cantidad.
+    public Precio multiplicarPor(int cantidad) {
+        if (cantidad < 1) {
+            throw new ReglaDominioException("La cantidad debe ser al menos 1.");
+        }
+        return new Precio(monto * cantidad, moneda);
+    }
+
     public boolean tieneLaMismaMonedaQue(Precio otro) {
         return this.moneda.equals(otro.moneda);
     }

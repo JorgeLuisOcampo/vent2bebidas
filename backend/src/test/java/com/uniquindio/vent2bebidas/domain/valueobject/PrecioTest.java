@@ -73,4 +73,23 @@ class PrecioTest {
             precio.conDescuento(100);
         });
     }
+
+    @Test
+    void multiplicarPorDevuelveUnNuevoPrecioSinModificarElOriginal() {
+        // Arrange
+        Precio unitario = new Precio(5000, "COP");
+
+        // Act
+        Precio total = unitario.multiplicarPor(3);
+
+        // Assert
+        assertEquals(new Precio(15000, "COP"), total);
+        assertEquals(5000.0, unitario.monto()); // el original es inmutable
+    }
+
+    @Test
+    void noDebeMultiplicarPorCeroUnidades() {
+        // Act & Assert
+        assertThrows(ReglaDominioException.class, () -> new Precio(5000, "COP").multiplicarPor(0));
+    }
 }
