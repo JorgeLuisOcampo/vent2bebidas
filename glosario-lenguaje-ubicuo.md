@@ -149,6 +149,50 @@ boolean permitida = consumidor.puedeComprarPorVolumen(6);
 
 ---
 
+### Compra
+**Definición:** Registro de que un consumidor adquirió entre 1 y 24 unidades de una bebida, al precio unitario que tenía en ese momento. Es la raíz de su propio agregado y solo guarda los ids del consumidor, la bebida y el vendedor.
+
+**Estados:** `CONFIRMADA` → `CANCELADA` (final).
+
+**No usar:** pedido, orden, venta, transacción
+
+**Ejemplo de uso:**
+```java
+Compra compra = Compra.confirmar(id, consumidorId, bebidaId, vendedorId, 2, bebida.getPrecio(), LocalDateTime.now());
+Precio total = compra.total();
+```
+
+---
+
+### Cancelación de compra
+**Definición:** Acción con la que el mismo consumidor anula su compra dentro de las 24 horas siguientes a confirmarla.
+
+**No usar:** reembolso, devolución, anulación
+
+**Ejemplo de uso:**
+```java
+compra.cancelar(consumidorId, LocalDateTime.now());
+```
+
+---
+
+### Bebidas más vendidas
+**Definición:** Ranking de bebidas publicadas ordenadas por las unidades vendidas en compras confirmadas. Lo calcula la base de datos.
+
+**No usar:** top, populares, trending
+
+**Ejemplo de uso:**
+```java
+List<BebidaVendida> ranking = compraRepository.masVendidas(5);
+```
+
+---
+
+### Comprador y Vendedor (roles de seguridad)
+**Definición:** `COMPRADOR` y `VENDEDOR` son los **roles del token JWT**, no conceptos del dominio. En el dominio quien compra es el **Consumidor**; el vendedor solo aparece como el id dueño de una bebida.
+
+---
+
 ## Anti-patrones
 
 | No usar | Usar |
@@ -163,3 +207,5 @@ boolean permitida = consumidor.puedeComprarPorVolumen(6);
 | borrar bebida, delete | Eliminación lógica (`eliminarLogicamente`) |
 | comprador, cliente, usuario, persona | Consumidor |
 | compra mayorista, compra grande | Compra por volumen |
+| pedido, orden, venta | Compra (`Compra.confirmar`) |
+| reembolso, anulación | Cancelación (`cancelar`) |
