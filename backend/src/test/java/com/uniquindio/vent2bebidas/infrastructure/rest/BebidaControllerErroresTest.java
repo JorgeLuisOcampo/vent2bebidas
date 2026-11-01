@@ -7,6 +7,7 @@ import com.uniquindio.vent2bebidas.application.usecase.ObtenerBebidaUseCase;
 import com.uniquindio.vent2bebidas.application.usecase.RegistrarBebidaUseCase;
 import com.uniquindio.vent2bebidas.domain.exception.ReglaDominioException;
 import com.uniquindio.vent2bebidas.infrastructure.rest.mapper.BebidaMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -20,7 +21,6 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -54,6 +54,14 @@ class BebidaControllerErroresTest {
     private CambiarPrecioBebidaUseCase cambiarPrecio;
     @MockitoBean
     private EliminarBebidaUseCase eliminarBebida;
+    // Reemplaza la lectura del token: en esta prueba la seguridad está apagada.
+    @MockitoBean
+    private UsuarioAutenticado usuarioAutenticado;
+
+    @BeforeEach
+    void simularUsuarioDelToken() {
+        when(usuarioAutenticado.id()).thenReturn(VENDEDOR_ID);
+    }
 
     @Test
     void deberiaResponder404CuandoLaBebidaNoExiste() throws Exception {
@@ -75,7 +83,6 @@ class BebidaControllerErroresTest {
                 any(), any());
 // Act & Assert
         mockMvc.perform(put("/api/bebidas/{id}/precio", id)
-                        .with(jwt().jwt(j -> j.claim("uid", VENDEDOR_ID.toString())))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(PRECIO_VALIDO))
                 .andExpect(status().isNotFound());
@@ -89,7 +96,6 @@ class BebidaControllerErroresTest {
                 .when(cambiarPrecio).ejecutar(eq(id), any(), any());
 // Act & Assert
         mockMvc.perform(put("/api/bebidas/{id}/precio", id)
-                        .with(jwt().jwt(j -> j.claim("uid", VENDEDOR_ID.toString())))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(PRECIO_VALIDO))
                 .andExpect(status().isBadRequest())
@@ -113,8 +119,7 @@ class BebidaControllerErroresTest {
 // Arrange
         UUID id = UUID.randomUUID();
 // Act & Assert: responde 204 y el caso de uso recibe el vendedor que viene en el token
-        mockMvc.perform(delete("/api/bebidas/{id}", id)
-                        .with(jwt().jwt(j -> j.claim("uid", VENDEDOR_ID.toString()))))
+        mockMvc.perform(delete("/api/bebidas/{id}", id))
                 .andExpect(status().isNoContent());
         verify(eliminarBebida).ejecutar(id, VENDEDOR_ID);
     }

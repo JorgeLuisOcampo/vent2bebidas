@@ -14,8 +14,6 @@ import com.uniquindio.vent2bebidas.domain.valueobject.GrupoAlcoholico;
 import com.uniquindio.vent2bebidas.infrastructure.rest.mapper.BebidaMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,19 +38,22 @@ public class BebidaController {
     private final CambiarPrecioBebidaUseCase cambiarPrecioUseCase;
     private final EliminarBebidaUseCase eliminarBebidaUseCase;
     private final BebidaMapper mapper;
+    private final UsuarioAutenticado usuarioAutenticado;
 
     public BebidaController(BuscarBebidasUseCase buscarBebidasUseCase,
                             ObtenerBebidaUseCase obtenerBebidaUseCase,
                             RegistrarBebidaUseCase registrarBebidaUseCase,
                             CambiarPrecioBebidaUseCase cambiarPrecioUseCase,
                             EliminarBebidaUseCase eliminarBebidaUseCase,
-                            BebidaMapper mapper) {
+                            BebidaMapper mapper,
+                            UsuarioAutenticado usuarioAutenticado) {
         this.buscarBebidasUseCase = buscarBebidasUseCase;
         this.obtenerBebidaUseCase = obtenerBebidaUseCase;
         this.registrarBebidaUseCase = registrarBebidaUseCase;
         this.cambiarPrecioUseCase = cambiarPrecioUseCase;
         this.eliminarBebidaUseCase = eliminarBebidaUseCase;
         this.mapper = mapper;
+        this.usuarioAutenticado = usuarioAutenticado;
     }
 
     // GET /api/bebidas?texto=cerveza&grupo=FERMENTADA&pagina=0&tamano=10
@@ -74,10 +75,9 @@ public class BebidaController {
 
     // POST /api/bebidas (solo VENDEDOR). El vendedor sale del claim "uid" del token.
     @PostMapping
-    public ResponseEntity<BebidaDetalleResponse> registrar(@Valid @RequestBody RegistrarBebidaRequest request,
-                                                           @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<BebidaDetalleResponse> registrar(@Valid @RequestBody RegistrarBebidaRequest request) {
         Bebida bebida = registrarBebidaUseCase.ejecutar(
-                UsuarioAutenticado.idDe(jwt),
+                usuarioAutenticado.id(),
                 request.nombre(),
                 mapper.toTipoEnvase(request),
                 request.grupoAlcoholico(),
@@ -92,17 +92,15 @@ public class BebidaController {
     // PUT /api/bebidas/{id}/precio (solo VENDEDOR, y solo el dueño de la bebida)
     @PutMapping("/{id}/precio")
     public ResponseEntity<Void> cambiarPrecio(@PathVariable("id") UUID id,
-                                              @Valid @RequestBody CambiarPrecioRequest request,
-                                              @AuthenticationPrincipal Jwt jwt) {
-        cambiarPrecioUseCase.ejecutar(id, UsuarioAutenticado.idDe(jwt), mapper.toPrecio(request));
+                                              @Valid @RequestBody CambiarPrecioRequest request) {
+        cambiarPrecioUseCase.ejecutar(id, usuarioAutenticado.id(), mapper.toPrecio(request));
         return ResponseEntity.noContent().build();
     }
 
     // DELETE /api/bebidas/{id} (solo VENDEDOR dueño). Borrado LÓGICO: la fila no se borra.
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable("id") UUID id,
-                                         @AuthenticationPrincipal Jwt jwt) {
-        eliminarBebidaUseCase.ejecutar(id, UsuarioAutenticado.idDe(jwt));
+    public ResponseEntity<Void> eliminar(@PathVariable("id") UUID id) {
+        eliminarBebidaUseCase.ejecutar(id, usuarioAutenticado.id());
         return ResponseEntity.noContent().build();
     }
 }
