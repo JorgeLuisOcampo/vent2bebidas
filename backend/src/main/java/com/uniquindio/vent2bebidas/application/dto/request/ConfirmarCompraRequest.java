@@ -5,11 +5,11 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-// Mapea a: Consumidor.verificarPuedeComprar(...) + registrarCompraExitosa()
-// (caso de uso ConfirmarCompraDeBebidaUseCase)
+// Mapea a: ConfirmarCompraDeBebidaUseCase -> Consumidor.verificarPuedeComprar(...) + Compra.confirmar(...)
+// El consumidor NO viaja en el cuerpo: se toma del claim "uid" del token JWT,
+// así nadie puede comprar a nombre de otra persona.
 public record ConfirmarCompraRequest(
-        @NotNull UUID consumidorId,   // quién compra
-        @NotNull UUID bebidaId,       // qué bebida compra
-        @Min(1) int unidades          // cuántas unidades (la regla de volumen se valida en el dominio)
+        @NotNull(message = "La bebida es obligatoria") UUID bebidaId, // qué bebida compra
+        @Min(value = 1, message = "Debe comprar al menos una unidad") int unidades // el máximo lo valida el dominio
 ) {
 }
