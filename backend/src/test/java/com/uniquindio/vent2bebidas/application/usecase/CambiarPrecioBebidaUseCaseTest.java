@@ -45,8 +45,8 @@ class CambiarPrecioBebidaUseCaseTest {
         UUID id = UUID.randomUUID();
         when(repository.obtenerPorId(id)).thenReturn(Optional.empty());
 // Act & Assert
-        assertThrows(NoSuchElementException.class, () -> useCase.ejecutar(id, new
-                Precio(6500, "COP")));
+        assertThrows(NoSuchElementException.class, () -> useCase.ejecutar(id, UUID.randomUUID(),
+                new Precio(6500, "COP")));
         verify(repository, never()).guardar(any());
     }
 
@@ -57,7 +57,18 @@ class CambiarPrecioBebidaUseCaseTest {
         when(repository.obtenerPorId(bebida.getId())).thenReturn(Optional.of(bebida));
 // Act & Assert
         assertThrows(ReglaDominioException.class, () -> useCase.ejecutar(bebida.getId(),
-                new Precio(5000, "COP")));
+                bebida.getVendedorId(), new Precio(5000, "COP")));
+        verify(repository, never()).guardar(any());
+    }
+
+    @Test
+    void noDeberiaGuardarSiQuienCambiaElPrecioNoEsElDueno() {
+// Arrange: un vendedor distinto al que publicó la bebida
+        Bebida bebida = bebidaConPrecio5000();
+        when(repository.obtenerPorId(bebida.getId())).thenReturn(Optional.of(bebida));
+// Act & Assert
+        assertThrows(ReglaDominioException.class, () -> useCase.ejecutar(bebida.getId(),
+                UUID.randomUUID(), new Precio(6500, "COP")));
         verify(repository, never()).guardar(any());
     }
 
@@ -67,7 +78,7 @@ class CambiarPrecioBebidaUseCaseTest {
         Bebida bebida = bebidaConPrecio5000();
         when(repository.obtenerPorId(bebida.getId())).thenReturn(Optional.of(bebida));
 // Act
-        useCase.ejecutar(bebida.getId(), new Precio(6500, "COP"));
+        useCase.ejecutar(bebida.getId(), bebida.getVendedorId(), new Precio(6500, "COP"));
 // Assert
         verify(repository).guardar(bebida);
         assertEquals(6500.0, bebida.getPrecio().monto());

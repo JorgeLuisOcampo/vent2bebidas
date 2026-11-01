@@ -43,7 +43,7 @@ class BebidaUseCasesTest {
         CambiarPrecioBebidaUseCase useCase = new CambiarPrecioBebidaUseCase(repository);
 
         // Act
-        useCase.ejecutar(bebida.getId(), new Precio(6500, "COP"));
+        useCase.ejecutar(bebida.getId(), bebida.getVendedorId(), new Precio(6500, "COP"));
 
         // Assert
         Bebida guardada = repository.obtenerPorId(bebida.getId()).orElseThrow();
@@ -57,7 +57,7 @@ class BebidaUseCasesTest {
 
         // Act & Assert
         assertThrows(NoSuchElementException.class, () -> {
-            useCase.ejecutar(UUID.randomUUID(), new Precio(6500, "COP"));
+            useCase.ejecutar(UUID.randomUUID(), UUID.randomUUID(), new Precio(6500, "COP"));
         });
     }
 
@@ -68,7 +68,7 @@ class BebidaUseCasesTest {
         EliminarBebidaUseCase useCase = new EliminarBebidaUseCase(repository);
 
         // Act
-        useCase.ejecutar(bebida.getId());
+        useCase.ejecutar(bebida.getId(), bebida.getVendedorId());
 
         // Assert
         Bebida guardada = repository.obtenerPorId(bebida.getId()).orElseThrow(); // sigue existiendo
@@ -80,7 +80,7 @@ class BebidaUseCasesTest {
         // Arrange
         Bebida visible = registrarBebida("Cerveza Rubia");
         Bebida eliminada = registrarBebida("Cerveza Negra");
-        new EliminarBebidaUseCase(repository).ejecutar(eliminada.getId());
+        new EliminarBebidaUseCase(repository).ejecutar(eliminada.getId(), eliminada.getVendedorId());
         ListarBebidasDisponiblesUseCase useCase = new ListarBebidasDisponiblesUseCase(repository);
 
         // Act

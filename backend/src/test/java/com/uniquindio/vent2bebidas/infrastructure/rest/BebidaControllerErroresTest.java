@@ -19,6 +19,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @Import(BebidaMapper.class)
 class BebidaControllerErroresTest {
+    private static final UUID VENDEDOR_ID = UUID.randomUUID();
     private static final String PRECIO_VALIDO = """
             { "monto": 6500, "moneda": "COP" }
             """;
@@ -66,9 +68,10 @@ class BebidaControllerErroresTest {
 // Arrange
         UUID id = UUID.randomUUID();
         doThrow(new NoSuchElementException()).when(cambiarPrecio).ejecutar(eq(id),
-                any());
+                any(), any());
 // Act & Assert
         mockMvc.perform(put("/api/bebidas/{id}/precio", id)
+                        .with(jwt().jwt(j -> j.claim("uid", VENDEDOR_ID.toString())))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(PRECIO_VALIDO))
                 .andExpect(status().isNotFound());
@@ -79,9 +82,10 @@ class BebidaControllerErroresTest {
 // Arrange
         UUID id = UUID.randomUUID();
         doThrow(new ReglaDominioException("El nuevo precio debe ser diferente al actual."))
-                .when(cambiarPrecio).ejecutar(eq(id), any());
+                .when(cambiarPrecio).ejecutar(eq(id), any(), any());
 // Act & Assert
         mockMvc.perform(put("/api/bebidas/{id}/precio", id)
+                        .with(jwt().jwt(j -> j.claim("uid", VENDEDOR_ID.toString())))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(PRECIO_VALIDO))
                 .andExpect(status().isBadRequest())
@@ -97,6 +101,6 @@ class BebidaControllerErroresTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest());
-        verify(cambiarPrecio, never()).ejecutar(any(), any());
+        verify(cambiarPrecio, never()).ejecutar(any(), any(), any());
     }
 }

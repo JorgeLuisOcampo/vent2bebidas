@@ -3,6 +3,7 @@ package com.uniquindio.vent2bebidas.application.usecase;
 import com.uniquindio.vent2bebidas.domain.entity.Bebida;
 import com.uniquindio.vent2bebidas.domain.repository.BebidaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -15,9 +16,11 @@ public class EliminarBebidaUseCase {
         this.repository = repository;
     }
 
-    public void ejecutar(UUID bebidaId) {
+    // Borrado LÓGICO: la fila sigue en la base con estado ELIMINADA (soft delete).
+    @Transactional
+    public void ejecutar(UUID bebidaId, UUID vendedorId) {
         Bebida bebida = repository.obtenerPorId(bebidaId).orElseThrow();
-        bebida.eliminarLogicamente(); // borrado LÓGICO: la bebida sigue existiendo
+        bebida.eliminarLogicamentePor(vendedorId);
         repository.guardar(bebida);
     }
 }

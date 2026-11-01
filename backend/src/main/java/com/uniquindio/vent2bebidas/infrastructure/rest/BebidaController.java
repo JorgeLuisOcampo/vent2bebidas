@@ -87,11 +87,12 @@ public class BebidaController {
         return ResponseEntity.created(location).body(mapper.toResponse(bebida));
     }
 
-    // PUT /api/bebidas/{id}/precio (solo VENDEDOR)
+    // PUT /api/bebidas/{id}/precio (solo VENDEDOR, y solo el dueño de la bebida)
     @PutMapping("/{id}/precio")
     public ResponseEntity<Void> cambiarPrecio(@PathVariable("id") UUID id,
-                                              @Valid @RequestBody CambiarPrecioRequest request) {
-        cambiarPrecioUseCase.ejecutar(id, mapper.toPrecio(request));
+                                              @Valid @RequestBody CambiarPrecioRequest request,
+                                              @AuthenticationPrincipal Jwt jwt) {
+        cambiarPrecioUseCase.ejecutar(id, vendedorIdDe(jwt), mapper.toPrecio(request));
         return ResponseEntity.noContent().build();
     }
 

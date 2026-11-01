@@ -73,7 +73,9 @@ class BebidaIntegracionTest {
 """;
 // Act
         mockMvc.perform(put("/api/bebidas/{id}/precio", CERVEZA_RUBIA_ID)
-                        .with(jwt().authorities(new SimpleGrantedAuthority("VENDEDOR")))
+                        // el vendedor del token es el DUEÑO de la bebida en data.sql
+                        .with(jwt().jwt(j -> j.claim("uid", VENDEDOR_ID.toString()))
+                                .authorities(new SimpleGrantedAuthority("VENDEDOR")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(cuerpo))
                 .andExpect(status().isNoContent());

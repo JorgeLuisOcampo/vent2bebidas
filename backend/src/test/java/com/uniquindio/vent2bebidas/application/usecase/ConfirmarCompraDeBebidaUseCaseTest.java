@@ -71,7 +71,7 @@ class ConfirmarCompraDeBebidaUseCaseTest {
         // Arrange
         Consumidor consumidor = registrarConsumidor("AB12CD", 30);
         Bebida bebida = registrarBebida(GrupoAlcoholico.SIN_ALCOHOL);
-        new EliminarBebidaUseCase(bebidas).ejecutar(bebida.getId());
+        new EliminarBebidaUseCase(bebidas).ejecutar(bebida.getId(), bebida.getVendedorId());
 
         // Act & Assert
         assertThrows(ReglaDominioException.class, () -> {
