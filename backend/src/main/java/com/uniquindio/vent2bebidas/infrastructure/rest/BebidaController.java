@@ -12,6 +12,8 @@ import com.uniquindio.vent2bebidas.application.usecase.RegistrarBebidaUseCase;
 import com.uniquindio.vent2bebidas.domain.entity.Bebida;
 import com.uniquindio.vent2bebidas.domain.valueobject.GrupoAlcoholico;
 import com.uniquindio.vent2bebidas.infrastructure.rest.mapper.BebidaMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +33,7 @@ import java.util.UUID;
 // Controller DELGADO: recibe, delega en el caso de uso y responde. Sin reglas de negocio.
 @RestController
 @RequestMapping("/api/bebidas")
+@Tag(name = "Bebidas", description = "Catálogo de bebidas: búsqueda (todos) y gestión (vendedor)")
 public class BebidaController {
     private final BuscarBebidasUseCase buscarBebidasUseCase;
     private final ObtenerBebidaUseCase obtenerBebidaUseCase;
@@ -58,6 +61,9 @@ public class BebidaController {
 
     // GET /api/bebidas?texto=cerveza&grupo=FERMENTADA&pagina=0&tamano=10
     @GetMapping
+    @Operation(summary = "Buscar bebidas disponibles",
+            description = "Listado paginado. Filtra por texto en el nombre y por grupo alcohólico. "
+                    + "Nunca muestra bebidas eliminadas.")
     public PageResponse<BebidaDetalleResponse> buscar(
             @RequestParam(name = "texto", required = false) String texto,
             @RequestParam(name = "grupo", required = false) GrupoAlcoholico grupo,
@@ -69,12 +75,15 @@ public class BebidaController {
 
     // GET /api/bebidas/{id}
     @GetMapping("/{id}")
+    @Operation(summary = "Consultar el detalle de una bebida", description = "404 si no existe.")
     public BebidaDetalleResponse obtener(@PathVariable("id") UUID id) {
         return mapper.toResponse(obtenerBebidaUseCase.ejecutar(id));
     }
 
     // POST /api/bebidas (solo VENDEDOR). El vendedor sale del claim "uid" del token.
     @PostMapping
+    @Operation(summary = "Publicar una bebida (VENDEDOR)",
+            description = "El vendedor se toma del token, no del cuerpo.")
     public ResponseEntity<BebidaDetalleResponse> registrar(@Valid @RequestBody RegistrarBebidaRequest request) {
         Bebida bebida = registrarBebidaUseCase.ejecutar(
                 usuarioAutenticado.id(),
@@ -91,6 +100,9 @@ public class BebidaController {
 
     // PUT /api/bebidas/{id}/precio (solo VENDEDOR, y solo el dueño de la bebida)
     @PutMapping("/{id}/precio")
+    @Operation(summary = "Cambiar el precio de una bebida (VENDEDOR dueño)",
+            description = "422 si el precio es igual al actual, cambia de moneda, "
+                    + "la bebida está eliminada o el vendedor no es el dueño.")
     public ResponseEntity<Void> cambiarPrecio(@PathVariable("id") UUID id,
                                               @Valid @RequestBody CambiarPrecioRequest request) {
         cambiarPrecioUseCase.ejecutar(id, usuarioAutenticado.id(), mapper.toPrecio(request));
@@ -99,6 +111,8 @@ public class BebidaController {
 
     // DELETE /api/bebidas/{id} (solo VENDEDOR dueño). Borrado LÓGICO: la fila no se borra.
     @DeleteMapping("/{id}")
+    @Operation(summary = "Retirar una bebida del catálogo (VENDEDOR dueño)",
+            description = "Eliminación lógica: la bebida queda en estado ELIMINADA y deja de listarse.")
     public ResponseEntity<Void> eliminar(@PathVariable("id") UUID id) {
         eliminarBebidaUseCase.ejecutar(id, usuarioAutenticado.id());
         return ResponseEntity.noContent().build();

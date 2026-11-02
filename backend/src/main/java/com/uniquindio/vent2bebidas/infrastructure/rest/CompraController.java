@@ -7,6 +7,8 @@ import com.uniquindio.vent2bebidas.application.usecase.ConfirmarCompraDeBebidaUs
 import com.uniquindio.vent2bebidas.application.usecase.ListarComprasDelConsumidorUseCase;
 import com.uniquindio.vent2bebidas.domain.entity.Compra;
 import com.uniquindio.vent2bebidas.infrastructure.rest.mapper.CompraMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,7 @@ import java.util.UUID;
 // Controller DELGADO de compras (rol COMPRADOR): recibe, delega en el caso de uso y responde.
 @RestController
 @RequestMapping("/api/compras")
+@Tag(name = "Compras", description = "Compras del consumidor autenticado (COMPRADOR)")
 public class CompraController {
 
     private final ConfirmarCompraDeBebidaUseCase confirmarCompraUseCase;
@@ -47,6 +50,9 @@ public class CompraController {
 
     // POST /api/compras  (solo COMPRADOR). El consumidor sale del token.
     @PostMapping
+    @Operation(summary = "Comprar una bebida (COMPRADOR)",
+            description = "422 si la bebida no está disponible, si un menor compra alcohol, "
+                    + "si pide más de 5 unidades sin historial o más de 24 unidades.")
     public ResponseEntity<CompraResponse> comprar(@Valid @RequestBody ConfirmarCompraRequest request) {
         Compra compra = confirmarCompraUseCase.ejecutar(
                 usuarioAutenticado.id(), request.bebidaId(), request.unidades());
@@ -59,6 +65,7 @@ public class CompraController {
 
     // GET /api/compras/mias  (solo COMPRADOR)
     @GetMapping("/mias")
+    @Operation(summary = "Listar mis compras (COMPRADOR)", description = "De la más reciente a la más antigua.")
     public List<CompraResponse> misCompras() {
         return listarComprasUseCase.ejecutar(usuarioAutenticado.id()).stream()
                 .map(mapper::toResponse)
@@ -67,6 +74,8 @@ public class CompraController {
 
     // PUT /api/compras/{id}/cancelar  (solo COMPRADOR, y solo el dueño de la compra)
     @PutMapping("/{id}/cancelar")
+    @Operation(summary = "Cancelar una compra (COMPRADOR)",
+            description = "422 si pasaron más de 24 horas, si ya estaba cancelada o si no es su compra.")
     public CompraResponse cancelar(@PathVariable("id") UUID id) {
         return mapper.toResponse(cancelarCompraUseCase.ejecutar(id, usuarioAutenticado.id()));
     }

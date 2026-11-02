@@ -1,7 +1,6 @@
 package com.uniquindio.vent2bebidas.application.usecase;
 
 import com.uniquindio.vent2bebidas.domain.entity.Bebida;
-import com.uniquindio.vent2bebidas.domain.exception.ReglaDominioException;
 import com.uniquindio.vent2bebidas.domain.repository.Pagina;
 import com.uniquindio.vent2bebidas.domain.valueobject.Capacidad;
 import com.uniquindio.vent2bebidas.domain.valueobject.GrupoAlcoholico;
@@ -32,16 +31,16 @@ class BuscarBebidasUseCaseTest {
     @Test
     void noDeberiaPermitirUnaPaginaNegativa() {
 // Act & Assert
-        assertThrows(ReglaDominioException.class, () -> useCase.ejecutar("cerveza", null, -1,
+        assertThrows(IllegalArgumentException.class, () -> useCase.ejecutar("cerveza", null, -1,
                 10));
     }
 
     @Test
     void noDeberiaPermitirUnTamanoDePaginaFueraDeRango() {
 // Act & Assert
-        assertThrows(ReglaDominioException.class, () -> useCase.ejecutar("cerveza", null, 0,
+        assertThrows(IllegalArgumentException.class, () -> useCase.ejecutar("cerveza", null, 0,
                 0));
-        assertThrows(ReglaDominioException.class, () -> useCase.ejecutar("cerveza", null, 0,
+        assertThrows(IllegalArgumentException.class, () -> useCase.ejecutar("cerveza", null, 0,
                 51));
     }
 
