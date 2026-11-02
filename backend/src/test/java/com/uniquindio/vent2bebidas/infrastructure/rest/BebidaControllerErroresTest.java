@@ -106,11 +106,13 @@ class BebidaControllerErroresTest {
     void noDeberiaLlamarAlCasoDeUsoSiLosDatosSonInvalidos() throws Exception {
 // Arrange
         UUID id = UUID.randomUUID();
-// Act & Assert: el cuerpo vacío rompe @Positive y @NotBlank antes de llegar al caso de uso
+// Act & Assert: monto en 0 rompe @Positive y moneda vacía rompe @NotBlank antes de llegar al caso de uso.
+// (No se envía "{}": con Jackson 3 un primitivo que falta ni siquiera se puede leer.)
         mockMvc.perform(put("/api/bebidas/{id}/precio", id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                        .content("{ \"monto\": 0, \"moneda\": \"\" }"))
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.campos.monto").exists())
                 .andExpect(jsonPath("$.campos.moneda").exists());
         verify(cambiarPrecio, never()).ejecutar(any(), any(), any());
     }
