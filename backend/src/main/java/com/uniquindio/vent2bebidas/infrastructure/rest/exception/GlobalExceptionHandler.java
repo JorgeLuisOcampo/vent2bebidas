@@ -1,10 +1,12 @@
 package com.uniquindio.vent2bebidas.infrastructure.rest.exception;
 
 import com.uniquindio.vent2bebidas.domain.exception.ReglaDominioException;
+import com.uniquindio.vent2bebidas.infrastructure.security.CorreoYaRegistradoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,8 +23,10 @@ import java.util.NoSuchElementException;
 //
 //   400 -> los datos que llegaron son inválidos (validaciones del DTO, JSON mal formado, tipos)
 //   404 -> el recurso no existe
-//   422 -> los datos son válidos, pero rompen una REGLA DE NEGOCIO del dominio
-//   401/403 -> los responde la configuración de seguridad
+//   422 -> los datos son válidos pero rompen una REGLA DE NEGOCIO del dominio
+//   401 -> login fallido (aquí) o petición sin token válido (SecurityConfig)
+//   403 -> token válido pero sin el rol necesario (SecurityConfig)
+//   409 -> conflicto: el correo ya está registrado
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -70,6 +74,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> manejarArgumentoInvalido(IllegalArgumentException ex) {
         return construirRespuesta(HttpStatus.BAD_REQUEST, ex.getMessage()); // -> 400
+    }
+
+    // Login con correo o contraseña incorrectos. No se dice cuál de los dos falló (no dar pistas).
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, Object>> manejarCredenciales(AuthenticationException ex) {
+        return construirRespuesta(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos."); // -> 401
+    }
+
+    // Registro con un correo que ya existe.
+    @ExceptionHandler(CorreoYaRegistradoException.class)
+    public ResponseEntity<Map<String, Object>> manejarCorreoRepetido(CorreoYaRegistradoException ex) {
+        return construirRespuesta(HttpStatus.CONFLICT, ex.getMessage()); // -> 409
     }
 
     // Errores que el controller lanza con un código explícito (ej. token sin el claim "uid").
