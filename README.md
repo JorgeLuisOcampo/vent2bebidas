@@ -168,34 +168,35 @@ El detalle (por qué existe, dónde se protege y qué prueba lo demuestra) está
 ## Pruebas avanzadas
 Todas las pruebas corren con `./gradlew test` (desde la carpeta `backend`).
 
-### 1. Probar un endpoint con seguridad
-Probamos rutas protegidas con tres casos: sin token responde 401 (el sistema no sabe quién eres),
-con el rol equivocado responde 403 (sabe quién eres pero no tienes permiso) y con el rol correcto
-responde 200 (`SeguridadRolesEndpointTest`, `SeguridadBebidaEndpointTest`). Usamos `@SpringBootTest`
-con `@AutoConfigureMockMvc` para que se cargue nuestra seguridad real, y `jwt()` de
-`spring-security-test` para simular un usuario con el rol que queramos sin pasar por el login.
-Además, `AutenticacionIntegracionTest` hace el login real y usa el token firmado de verdad.
-Un `@WebMvcTest` no carga nuestro `SecurityConfig`, por eso ahí apagamos los filtros con `addFilters = false`.
-
-Lo que más nos costó: [escribe aquí tu experiencia].
+En el punto 1 probamos que la ruta protegida /api/bebidas responda distinto según quién la llame.
+Hicimos tres pruebas: sin token responde 401, con el rol COMPRADOR intentando publicar una bebida
+responde 403 y con el rol COMPRADOR viendo el catálogo responde 200. El 401 significa que el sistema no
+sabe quién eres, y el 403 que sí lo sabe pero no tienes permiso para esa acción. Usamos @SpringBootTest
+con @AutoConfigureMockMvc para que se cargue nuestra SecurityConfig real, y el jwt() de
+spring-security-test para simular un usuario autenticado con el rol que queramos, sin pasar por un login.
+Un @WebMvcTest no carga esa configuración, por eso en las pruebas del controller apagamos los filtros.
+Lo que más nos costó fue entender por qué la misma ruta /api/bebidas da 200 con GET y 403 con POST.
 
 ### 2. @DataJpaTest contra @SpringBootTest
-`@SpringBootTest` levanta toda la aplicación; `@DataJpaTest` levanta solo la capa de
-persistencia (entidades y repositorios de Spring Data), así que es más rápida y
-deshace cada prueba sola. Como no carga nuestros `@Repository` ni `@Component`, tuvimos que
-traer el adaptador y el mapper con `@Import`. En Spring Boot 4 el paquete de `@DataJpaTest`
-cambió a `org.springframework.boot.data.jpa.test.autoconfigure` y necesita el starter
-de pruebas `spring-boot-starter-data-jpa-test`.
 
-Lo que más nos costó: [escribe aquí tu experiencia].
+@SpringBootTest levanta toda la aplicación (controllers, casos de uso, seguridad y base de datos),
+mientras que @DataJpaTest levanta solo la capa de persistencia: las entidades y los repositorios de
+Spring Data. Por eso es más rápida y además deshace cada prueba sola. A cambio, no carga nuestros
+@Repository ni @Component, así que tuvimos que traer el adaptador y el mapper con @Import.
+En Spring Boot 4 esta anotación cambió de paquete (org.springframework.boot.data.jpa.test.autoconfigure)
+y necesita su propio starter de pruebas, spring-boot-starter-data-jpa-test; en nuestro caso ya estaba
+en el build.gradle, solo tuvimos que importar bien la anotación. Lo que más nos costó fue que el IDE
+no encontraba el método buscar del repositorio: nos faltaba el commit que lo agregaba.
 
 ### 3. Prueba de integración
-Una prueba de integración recorre varias piezas funcionando juntas de verdad: la petición entra
-por el controller, pasa por el caso de uso, el dominio, el repositorio JPA y llega a la base H2,
-sin ningún `@MockitoBean`. `FlujoCompraIntegracionTest` inicia sesión de verdad, publica una
-bebida, la compra, la cancela, rompe reglas de negocio a propósito y consulta el ranking.
 
-Lo que más nos costó: [escribe aquí tu experiencia].
+Una prueba de integración recorre varias piezas funcionando juntas de verdad, sin simular nada. La nuestra
+hace una petición HTTP que pasa por la seguridad, el controller, el caso de uso y el repositorio JPA, y
+llega hasta la base de datos H2: publica una bebida y luego la consulta, y también cambia el precio de una
+bebida de data.sql y comprueba que el cambio quedó guardado. Una prueba unitaria, en cambio, prueba una
+sola clase y simula todo lo demás con Mockito; es más rápida, pero no nos asegura que las piezas funcionen
+juntas. Conviene usar la integración para los flujos importantes y dejar los casos de borde para las unitarias.
+Lo que más nos costó fue entender que la petición pasa por dos mappers distintos: el de la API y el de persistencia.
 
 ### 4. Más casos en el controller
 `CompraControllerTest` y `BebidaControllerErroresTest` prueban el 404 (recurso que no existe),
