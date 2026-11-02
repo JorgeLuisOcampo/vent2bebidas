@@ -1,20 +1,13 @@
 package com.uniquindio.vent2bebidas.infrastructure.security;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 
 // Roles del sistema: COMPRADOR y VENDEDOR (vienen en el claim "roles" del token, SIN prefijo "ROLE_").
 @Configuration
@@ -46,15 +39,8 @@ public class SecurityConfig {
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
         return http.build();
     }
-    // Verifica la firma de los tokens que llegan en "Authorization: Bearer <token>".
-    @Bean
-    JwtDecoder jwtDecoder(@Value("${app.jwt.secret}") String secreto) {
-        SecretKey clave = new SecretKeySpec(secreto.getBytes(StandardCharsets.UTF_8),
-                "HmacSHA256");
-        return
-                NimbusJwtDecoder.withSecretKey(clave).macAlgorithm(MacAlgorithm.HS256).build();
-    }
-    // Convierte el claim "roles" del token en autoridades de Spring Security (sin prefijo).
+    // El JwtDecoder que verifica la firma ahora vive en JwtConfig (junto con el JwtEncoder).
+// Convierte el claim "roles" del token en autoridades de Spring Security (sin prefijo).
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter autoridades = new JwtGrantedAuthoritiesConverter();
         autoridades.setAuthoritiesClaimName("roles");
