@@ -27,7 +27,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // API sin sesión ni cookies: no aplica CSRF
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // la consola de H2 se dibuja dentro de un <frame>: se permite solo desde el mismo origen
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth
+// documentación y consola de la base: públicas
+                        .requestMatchers("/error", "/v3/api-docs/**", "/swagger-ui/**",
+                                "/swagger-ui.html", "/h2-console/**").permitAll()
 // ver el catálogo: cualquier usuario autenticado
                         .requestMatchers(HttpMethod.GET, "/api/bebidas", "/api/bebidas/**")
                         .hasAnyAuthority(COMPRADOR, VENDEDOR)
@@ -49,7 +54,7 @@ public class SecurityConfig {
         return
                 NimbusJwtDecoder.withSecretKey(clave).macAlgorithm(MacAlgorithm.HS256).build();
     }
-// Convierte el claim "roles" del token en autoridades de Spring Security (sin prefijo).
+    // Convierte el claim "roles" del token en autoridades de Spring Security (sin prefijo).
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter autoridades = new JwtGrantedAuthoritiesConverter();
         autoridades.setAuthoritiesClaimName("roles");
