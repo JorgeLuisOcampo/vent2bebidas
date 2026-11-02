@@ -64,8 +64,27 @@ Estas reglas **nunca pueden romperse**: el sistema las impide en el dominio, y n
 
 ### RN-10 — El código de consumidor es único y tiene exactamente 6 caracteres alfanuméricos
 - **¿Por qué existe?** El código identifica al consumidor para acceder al catálogo. Si se repitiera, dos personas compartirían la misma identidad de acceso.
-- **Dónde se protege:** el formato, en `CodigoConsumidor`; la unicidad, en `RegistrarConsumidorUseCase`, porque exige comparar contra todos los consumidores.
-- **Pruebas:** `CodigoConsumidorTest.noDebeCrearUnCodigoDeLongitudDistintaDeSeis`, `RegistrarConsumidorUseCaseTest.noDebePermitirDosConsumidoresConElMismoCodigo`.
+- **Dónde se protege:** el formato, en `CodigoConsumidor`; la unicidad, en el servicio de dominio `VerificadorCodigoConsumidor`, porque exige comparar contra todos los consumidores (una entidad solo se conoce a sí misma). *Corrección de la Entrega 1: antes estaba en el caso de uso.* La base de datos también la respalda con `unique` en la columna `codigo`.
+- **Pruebas:** `CodigoConsumidorTest.noDebeCrearUnCodigoDeLongitudDistintaDeSeis`, `VerificadorCodigoConsumidorTest.deberiaRechazarUnCodigoQueYaTieneOtroConsumidor`, `RegistrarConsumidorUseCaseTest.noDebePermitirDosConsumidoresConElMismoCodigo`.
+
+### RN-11 — Solo el vendedor que publicó una bebida puede cambiarle el precio o eliminarla
+- **¿Por qué existe?** Cada vendedor administra su propia oferta. Si cualquiera pudiera tocar las bebidas de otro, podría bajarle el precio o sacarlo del catálogo.
+- **Dónde se protege:** `Bebida.verificarQuePerteneceA()`, llamado por `Bebida.cambiarPrecio(vendedor, precio)` y `Bebida.eliminarLogicamentePor(vendedor)`. El vendedor sale del claim `uid` del token, nunca del cuerpo de la petición.
+- **Pruebas:** `BebidaTest.otroVendedorNoPuedeCambiarElPrecio`, `otroVendedorNoPuedeEliminarLaBebida`, `CambiarPrecioBebidaUseCaseTest.noDeberiaGuardarSiQuienCambiaElPrecioNoEsElDueno`.
+
+---
+
+## Reglas de la compra
+
+### RN-12 — Una compra lleva entre 1 y 24 unidades
+- **¿Por qué existe?** Una compra sin unidades no tiene sentido, y más de 24 unidades (una caja) es un pedido mayorista que este marketplace no atiende.
+- **Dónde se protege:** `Compra.confirmar()` (método de fábrica de la raíz del agregado).
+- **Pruebas:** `CompraTest.noDebePermitirUnaCompraSinUnidades`, `noDebePermitirMasDe24UnidadesEnUnaCompra`.
+
+### RN-13 — Solo quien hizo la compra puede cancelarla, y solo dentro de las 24 horas siguientes
+- **¿Por qué existe?** Pasado un día el vendedor ya alistó o entregó el pedido. Y nadie debe poder cancelar la compra de otra persona.
+- **Dónde se protege:** `Compra.cancelar(consumidor, ahora)`. La hora se recibe como parámetro para que el dominio no dependa del reloj y se pueda probar.
+- **Pruebas:** `CompraTest.noDebePermitirCancelarDespuesDe24Horas`, `otroConsumidorNoPuedeCancelarLaCompra`, `noDebePermitirCancelarDosVeces`, `CancelarCompraUseCaseTest`.
 
 ---
 
@@ -83,3 +102,6 @@ Estas reglas **nunca pueden romperse**: el sistema las impide en el dominio, y n
 | RN-08 | Un menor nunca compra bebidas alcohólicas | Consumidor |
 | RN-09 | Más de 5 unidades exige más de 3 compras históricas | Consumidor |
 | RN-10 | El código de consumidor es único y de 6 caracteres alfanuméricos | Consumidor |
+| RN-11 | Solo el vendedor dueño modifica o elimina su bebida | Bebida |
+| RN-12 | Una compra lleva entre 1 y 24 unidades | Compra |
+| RN-13 | Solo el comprador cancela su compra, dentro de 24 horas | Compra |
