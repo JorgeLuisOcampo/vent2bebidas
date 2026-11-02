@@ -90,12 +90,14 @@ class CompraControllerTest {
         mockMvc.perform(post("/api/compras")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{ \"unidades\": 0 }"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.campos.bebidaId").exists())
+                .andExpect(jsonPath("$.campos.unidades").exists());
         verify(confirmarCompra, never()).ejecutar(any(), any(), anyInt());
     }
 
     @Test
-    void deberiaResponder400CuandoUnMenorCompraAlcohol() throws Exception {
+    void deberiaResponder422CuandoUnMenorCompraAlcohol() throws Exception {
         // Arrange: el dominio rechaza la compra
         when(confirmarCompra.ejecutar(CONSUMIDOR_ID, BEBIDA_ID, 1))
                 .thenThrow(new ReglaDominioException("Un menor de edad no puede comprar bebidas alcohólicas."));
@@ -104,7 +106,7 @@ class CompraControllerTest {
         mockMvc.perform(post("/api/compras")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(cuerpo(1)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().is(422))
                 .andExpect(jsonPath("$.mensaje").value("Un menor de edad no puede comprar bebidas alcohólicas."));
     }
 

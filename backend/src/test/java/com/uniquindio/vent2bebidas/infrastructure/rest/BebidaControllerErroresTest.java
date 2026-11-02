@@ -89,7 +89,7 @@ class BebidaControllerErroresTest {
     }
 
     @Test
-    void deberiaResponder400CuandoSeRompeUnaReglaDeNegocio() throws Exception {
+    void deberiaResponder422CuandoSeRompeUnaReglaDeNegocio() throws Exception {
 // Arrange
         UUID id = UUID.randomUUID();
         doThrow(new ReglaDominioException("El nuevo precio debe ser diferente al actual."))
@@ -98,7 +98,7 @@ class BebidaControllerErroresTest {
         mockMvc.perform(put("/api/bebidas/{id}/precio", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(PRECIO_VALIDO))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().is(422))
                 .andExpect(jsonPath("$.mensaje").value("El nuevo precio debe ser diferente al actual."));
     }
 
@@ -110,7 +110,8 @@ class BebidaControllerErroresTest {
         mockMvc.perform(put("/api/bebidas/{id}/precio", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.campos.moneda").exists());
         verify(cambiarPrecio, never()).ejecutar(any(), any(), any());
     }
 
