@@ -4,6 +4,7 @@ import com.uniquindio.vent2bebidas.domain.entity.Envase;
 import com.uniquindio.vent2bebidas.domain.repository.EnvaseRepository;
 import com.uniquindio.vent2bebidas.domain.valueobject.TipoEnvase;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ public class RegistrarEnvaseUseCase {
         this.repository = repository;
     }
 
+    @Transactional
     public Envase ejecutar(TipoEnvase tipo) {
         Envase envase = Envase.registrar(UUID.randomUUID(), tipo);
         repository.guardar(envase);

@@ -4,8 +4,6 @@ import com.uniquindio.vent2bebidas.domain.entity.Compra;
 import com.uniquindio.vent2bebidas.domain.repository.BebidaVendida;
 import com.uniquindio.vent2bebidas.domain.repository.CompraRepository;
 
-import org.springframework.stereotype.Repository;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-// Repositorio TEMPORAL mientras se implementa CompraRepositoryJpa: por ahora es el bean de Spring.
-// Cuando llegue la versión JPA dejará de ser bean y se usará solo en las pruebas unitarias.
-@Repository
+// NO es un bean de Spring: solo se usa en las pruebas unitarias de los casos de uso (se crea con new).
+// El repositorio real es CompraRepositoryJpa.
 public class CompraRepositoryEnMemoria implements CompraRepository {
 
     private final Map<UUID, Compra> baseDeDatos = new HashMap<>();

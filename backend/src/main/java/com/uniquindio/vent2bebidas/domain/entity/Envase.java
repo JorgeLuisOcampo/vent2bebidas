@@ -31,6 +31,21 @@ public class Envase {
         return new Envase(id, tipo);
     }
 
+    // SOLO para la capa de persistencia: reconstruye un envase que YA existía,
+    // con su estado y sus usos. Aun así no acepta datos imposibles.
+    public static Envase reconstruir(UUID id, TipoEnvase tipo, EstadoEnvase estado, int cantidadUsos) {
+        if (estado == null) {
+            throw new ReglaDominioException("El estado del envase es obligatorio.");
+        }
+        if (cantidadUsos < 0) {
+            throw new ReglaDominioException("La cantidad de usos no puede ser negativa.");
+        }
+        Envase envase = new Envase(id, tipo);
+        envase.estado = estado;
+        envase.cantidadUsos = cantidadUsos;
+        return envase;
+    }
+
     public void registrarRetorno() {
         if (!tipo.retornable()) {
             throw new ReglaDominioException("El envase no es retornable.");

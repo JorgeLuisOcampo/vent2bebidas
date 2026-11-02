@@ -2,14 +2,14 @@ package com.uniquindio.vent2bebidas.infrastructure.persistence;
 
 import com.uniquindio.vent2bebidas.domain.entity.Envase;
 import com.uniquindio.vent2bebidas.domain.repository.EnvaseRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+// Ya NO es un bean de Spring: el repositorio real es EnvaseRepositoryJpa.
+// Se conserva para las pruebas unitarias de los casos de uso (se crea con new).
 public class EnvaseRepositoryEnMemoria implements EnvaseRepository {
 
     private final Map<UUID, Envase> baseDeDatos = new HashMap<>();

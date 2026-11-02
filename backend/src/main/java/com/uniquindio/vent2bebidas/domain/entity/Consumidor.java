@@ -59,6 +59,19 @@ public class Consumidor {
         return new Consumidor(id, nombre.trim(), codigoConsumidor, fechaNacimiento);
     }
 
+    // SOLO para la capa de persistencia: reconstruye un Consumidor que YA existía.
+    // No repite las validaciones de registrar(...) (ya se hicieron al registrarlo),
+    // pero sí restaura su historial de compras, que nunca puede ser negativo.
+    public static Consumidor reconstruir(UUID id, String nombre, CodigoConsumidor codigoConsumidor,
+                                         LocalDate fechaNacimiento, int comprasHistoricas) {
+        if (comprasHistoricas < 0) {
+            throw new ReglaDominioException("El historial de compras no puede ser negativo.");
+        }
+        Consumidor consumidor = new Consumidor(id, nombre, codigoConsumidor, fechaNacimiento);
+        consumidor.comprasHistoricas = comprasHistoricas;
+        return consumidor;
+    }
+
     // ---------- Comportamiento del negocio ----------
     // Cada método valida PRIMERO, cambia el estado DESPUÉS — nunca al revés.
 

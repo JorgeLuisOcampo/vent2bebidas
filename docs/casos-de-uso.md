@@ -18,26 +18,62 @@
 | CU-07 | `DescartarEnvaseUseCase` | Vendedor | Envase | `EnvaseRepository` |
 | CU-08 | `RegistrarConsumidorUseCase` | Consumidor | Consumidor | `ConsumidorRepository` |
 | CU-09 | `ListarBebidasDisponiblesUseCase` | Consumidor | Bebida | `BebidaRepository` |
-| CU-10 | `ConfirmarCompraDeBebidaUseCase` | Consumidor | Consumidor y Bebida | `ConsumidorRepository` y `BebidaRepository` |
+| CU-10 | `ConfirmarCompraDeBebidaUseCase` | Consumidor | Consumidor, Bebida y Compra | `ConsumidorRepository`, `BebidaRepository` y `CompraRepository` |
+| CU-11 | `BuscarBebidasUseCase` | Consumidor y Vendedor | Bebida | `BebidaRepository` |
+| CU-12 | `ObtenerBebidaUseCase` | Consumidor y Vendedor | Bebida | `BebidaRepository` |
+| CU-13 | `CancelarCompraUseCase` | Consumidor | Compra | `CompraRepository` |
+| CU-14 | `ListarComprasDelConsumidorUseCase` | Consumidor | Compra | `CompraRepository` |
+| CU-15 | `ObtenerConsumidorUseCase` | Consumidor | Consumidor | `ConsumidorRepository` |
+| CU-16 | `ObtenerEnvaseUseCase` | Vendedor | Envase | `EnvaseRepository` |
+| CU-17 | `ConsultarBebidasMasVendidasUseCase` | Vendedor | Compra (ranking) | `CompraRepository` |
 
-**Cobertura:** 7 casos de uso del lado del vendedor y 3 del lado del consumidor.
+**Cobertura (Entrega 2):** 9 casos de uso del lado del vendedor y 8 del lado del consumidor, todos con endpoint REST.
+
+### Endpoint de cada caso de uso (Entrega 2)
+
+| Caso de uso | Endpoint | Rol |
+|---|---|---|
+| CU-01 RegistrarBebida | `POST /api/bebidas` | VENDEDOR |
+| CU-02 CambiarPrecioBebida | `PUT /api/bebidas/{id}/precio` | VENDEDOR (dueño) |
+| CU-03 EliminarBebida | `DELETE /api/bebidas/{id}` | VENDEDOR (dueño) |
+| CU-04 RegistrarEnvase | `POST /api/envases` | VENDEDOR |
+| CU-05 RegistrarRetornoEnvase | `PUT /api/envases/{id}/retorno` | VENDEDOR |
+| CU-06 MarcarEnvaseComoDanado | `PUT /api/envases/{id}/danado` | VENDEDOR |
+| CU-07 DescartarEnvase | `PUT /api/envases/{id}/descarte` | VENDEDOR |
+| CU-08 RegistrarConsumidor | `POST /api/auth/registro/comprador` | público |
+| CU-09 ListarBebidasDisponibles | reemplazado por CU-11 (paginado) | — |
+| CU-10 ConfirmarCompraDeBebida | `POST /api/compras` | COMPRADOR |
+| CU-11 BuscarBebidas | `GET /api/bebidas` | COMPRADOR, VENDEDOR |
+| CU-12 ObtenerBebida | `GET /api/bebidas/{id}` | COMPRADOR, VENDEDOR |
+| CU-13 CancelarCompra | `PUT /api/compras/{id}/cancelar` | COMPRADOR (dueño) |
+| CU-14 ListarComprasDelConsumidor | `GET /api/compras/mias` | COMPRADOR |
+| CU-15 ObtenerConsumidor | `GET /api/consumidores/yo` | COMPRADOR |
+| CU-16 ObtenerEnvase | `GET /api/envases/{id}` | VENDEDOR |
+| CU-17 ConsultarBebidasMasVendidas | `GET /api/reportes/bebidas-mas-vendidas` | VENDEDOR |
 
 ---
 
 ## 2. Matriz casos de uso × repositorios
 
-| Caso de uso | `BebidaRepository` | `EnvaseRepository` | `ConsumidorRepository` |
-|---|:---:|:---:|:---:|
-| CU-01 RegistrarBebida | ✔ | | |
-| CU-02 CambiarPrecioBebida | ✔ | | |
-| CU-03 EliminarBebida | ✔ | | |
-| CU-04 RegistrarEnvase | | ✔ | |
-| CU-05 RegistrarRetornoEnvase | | ✔ | |
-| CU-06 MarcarEnvaseComoDanado | | ✔ | |
-| CU-07 DescartarEnvase | | ✔ | |
-| CU-08 RegistrarConsumidor | | | ✔ |
-| CU-09 ListarBebidasDisponibles | ✔ | | |
-| CU-10 ConfirmarCompraDeBebida | ✔ | | ✔ |
+| Caso de uso | `BebidaRepository` | `EnvaseRepository` | `ConsumidorRepository` | `CompraRepository` |
+|---|:---:|:---:|:---:|:---:|
+| CU-01 RegistrarBebida | ✔ | | | |
+| CU-02 CambiarPrecioBebida | ✔ | | | |
+| CU-03 EliminarBebida | ✔ | | | |
+| CU-04 RegistrarEnvase | | ✔ | | |
+| CU-05 RegistrarRetornoEnvase | | ✔ | | |
+| CU-06 MarcarEnvaseComoDanado | | ✔ | | |
+| CU-07 DescartarEnvase | | ✔ | | |
+| CU-08 RegistrarConsumidor | | | ✔ | |
+| CU-09 ListarBebidasDisponibles | ✔ | | | |
+| CU-10 ConfirmarCompraDeBebida | ✔ | | ✔ | ✔ |
+| CU-11 BuscarBebidas | ✔ | | | |
+| CU-12 ObtenerBebida | ✔ | | | |
+| CU-13 CancelarCompra | | | | ✔ |
+| CU-14 ListarComprasDelConsumidor | | | | ✔ |
+| CU-15 ObtenerConsumidor | | | ✔ | |
+| CU-16 ObtenerEnvase | | ✔ | | |
+| CU-17 ConsultarBebidasMasVendidas | | | | ✔ |
 
 ---
 
