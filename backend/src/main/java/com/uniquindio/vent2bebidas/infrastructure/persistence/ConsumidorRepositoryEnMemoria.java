@@ -3,14 +3,14 @@ package com.uniquindio.vent2bebidas.infrastructure.persistence;
 import com.uniquindio.vent2bebidas.domain.entity.Consumidor;
 import com.uniquindio.vent2bebidas.domain.repository.ConsumidorRepository;
 import com.uniquindio.vent2bebidas.domain.valueobject.CodigoConsumidor;
-import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+// Ya NO es un bean de Spring: el repositorio real es ConsumidorRepositoryJpa.
+// Se conserva para las pruebas unitarias de los casos de uso (se crea con new).
 public class ConsumidorRepositoryEnMemoria implements ConsumidorRepository {
 
     private final Map<UUID, Consumidor> baseDeDatos = new HashMap<>();
